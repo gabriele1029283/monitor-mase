@@ -1,29 +1,25 @@
-name: Monitor MASE Plafond
+name: Monitor MASE Plafond automatico
 
 on:
-  schedule:
-    - cron: '*/10 * * * *'
-  workflow_dispatch:
-  push:  # Also run on any push to main
-    branches:
-      - main
+  workflow_dispatch: # Adesso parte SOLO se viene innescato manualmente o dall'API esterna
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      
+        uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      
+
       - name: Install dependencies
-        run: pip install -r requirements.txt
-      
-      - name: Run Monitor Script
+        run: |
+          pip install selenium webdriver-manager requests
+
+      - name: Run Sniper Script
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_ID: ${{ secrets.TELEGRAM_ID }}
