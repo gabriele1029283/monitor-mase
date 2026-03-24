@@ -1,3 +1,5 @@
+# --- 1. I TUOI DATI TELEGRAM IN CHIARO (Sostituisci i testi tra virgolette) ---
+
 import time
 import requests
 import re
@@ -7,7 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-# --- 1. I TUOI DATI TELEGRAM IN CHIARO (Sostituisci i testi tra virgolette) ---
+# --- I TUOI DATI TELEGRAM (Metti i tuoi codici veri qui tra le virgolette) ---
 BOT_TOKEN = "8234440236:AAFf5W85UjM1sSTK--tTRnebZ3LflLXUSJU"
 CHAT_ID = "376252522"
 
@@ -16,9 +18,9 @@ def invia_notifica(testo):
     payload = {"chat_id": CHAT_ID, "text": testo, "parse_mode": "HTML"}
     try:
         r = requests.post(url, json=payload, timeout=10)
-        print(f"📡 RISPOSTA TELEGRAM: {r.json()}") # Questo ci dirà se Telegram accetta il messaggio!
+        print(f"📡 Invio Telegram: {r.status_code}")
     except Exception as e:
-        print(f"❌ Errore di connessione a Telegram: {e}")
+        print(f"❌ Errore Telegram: {e}")
 
 def monitor_mase():
     chrome_options = Options()
@@ -45,26 +47,24 @@ def monitor_mase():
         if not testo_trovato:
             print("⚠️ Parola 'residuo' non trovata.")
             return
-
-        print(f"✅ Testo individuato: {testo_trovato}")
         
         parte_finale = testo_trovato.lower().split("residuo")[1]
         numeri = re.findall(r'\d+', parte_finale.replace('.', '').replace(',', ''))
         
         if numeri:
             valore = float(numeri[0])
-            print(f"💰 Valore estratto: {valore} €")
+            print(f"💰 Valore attuale: {valore} €")
 
-            # --- 2. SOGLIA DI TEST A 1000 EURO ---
-            if valore >= 10000:
-                print("🚨 SOGLIA SUPERATA! Provo a inviare il messaggio a Telegram...")
-                messaggio = "🚨 <b>TEST ALLARME!</b> 🚨\nSe leggi questo, il bot è perfettamente funzionante!"
+            if valore >= 1000:
+                print("🚨 SOGLIA SUPERATA! Invio allarme vero...")
+                # Qui ora è impostato per mandarti la cifra esatta!
+                messaggio = f"🚨 <b>FONDI DISPONIBILI!</b> 🚨\n\nIl residuo è salito a: <b>{valore} €</b>\n\nCorri a prenotare la Dacia!\n👉 <a href='https://www.bonusveicolielettrici.mase.gov.it'>CLICCA QUI PER IL MASE</a>"
                 invia_notifica(messaggio)
             else:
-                print("Fondi ancora sotto la soglia. Nessun allarme inviato.")
+                print("Fondi ancora sotto la soglia. Aspetto...")
 
     except Exception as e:
-        print(f"❌ Errore durante l'esecuzione: {e}")
+        print(f"❌ Errore: {e}")
     finally:
         driver.quit()
 
