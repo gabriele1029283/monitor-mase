@@ -56,7 +56,7 @@ def monitor_mase():
             print(f"💰 Valore estratto: {valore} €")
 
             # --- 2. SOGLIA DI TEST A 1000 EURO ---
-            if valore >= 1000:
+            if valore >= 10000:
                 print("🚨 SOGLIA SUPERATA! Provo a inviare il messaggio a Telegram...")
                 messaggio = "🚨 <b>TEST ALLARME!</b> 🚨\nSe leggi questo, il bot è perfettamente funzionante!"
                 invia_notifica(messaggio)
