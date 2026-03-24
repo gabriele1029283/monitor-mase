@@ -3,6 +3,7 @@
 import time
 import requests
 import re
+import os
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -10,8 +11,8 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 # --- I TUOI DATI TELEGRAM (Metti i tuoi codici veri qui tra le virgolette) ---
-BOT_TOKEN = "8234440236:AAFf5W85UjM1sSTK--tTRnebZ3LflLXUSJU"
-CHAT_ID = "376252522"
+BOT_TOKEN = os.environ['TELEGRAM_TOKEN']
+CHAT_ID = os.environ['TELEGRAM_ID']
 
 def invia_notifica(testo):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
