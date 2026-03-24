@@ -1,4 +1,3 @@
-import os
 import time
 import requests
 import re
@@ -6,24 +5,22 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 
-# --- CONFIGURAZIONE VARIABILI (DA GITHUB SECRETS) ---
-BOT_TOKEN = os.environ.get('TELEGRAM_TOKEN')
-CHAT_ID = os.environ.get('TELEGRAM_ID')
+# --- 1. I TUOI DATI TELEGRAM IN CHIARO (Sostituisci i testi tra virgolette) ---
+BOT_TOKEN = "8234440236:AAFf5W85UjM1sSTK--tTRnebZ3LflLXUSJU"
+CHAT_ID = "376252522"
 
 def invia_notifica(testo):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": testo, "parse_mode": "HTML"}
     try:
-        requests.post(url, json=payload, timeout=10)
+        r = requests.post(url, json=payload, timeout=10)
+        print(f"📡 RISPOSTA TELEGRAM: {r.json()}") # Questo ci dirà se Telegram accetta il messaggio!
     except Exception as e:
-        print(f"Errore invio Telegram: {e}")
+        print(f"❌ Errore di connessione a Telegram: {e}")
 
 def monitor_mase():
-    # Configurazione Chrome per ambiente Linux (GitHub Actions)
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
@@ -36,13 +33,9 @@ def monitor_mase():
     try:
         print("🔍 Apertura pagina MASE...")
         driver.get("https://www.bonusveicolielettrici.mase.gov.it/veicolielettriciBeneficiario/#/plafond")
-        
-        # Aspettiamo che la pagina carichi i dati (15 secondi per sicurezza su server remoto)
         time.sleep(15)
         
-        # Cerchiamo il testo che contiene il residuo
         elementi = driver.find_elements(By.TAG_NAME, "p") + driver.find_elements(By.TAG_NAME, "div")
-        
         testo_trovato = ""
         for el in elementi:
             if "residuo" in el.text.lower():
@@ -50,13 +43,11 @@ def monitor_mase():
                 break
         
         if not testo_trovato:
-            print("⚠️ Parola 'residuo' non trovata. Screenshot salvato.")
-            driver.save_screenshot("error_screenshot.png")
+            print("⚠️ Parola 'residuo' non trovata.")
             return
 
         print(f"✅ Testo individuato: {testo_trovato}")
         
-        # Estrazione valore numerico dopo la parola 'residuo'
         parte_finale = testo_trovato.lower().split("residuo")[1]
         numeri = re.findall(r'\d+', parte_finale.replace('.', '').replace(',', ''))
         
@@ -64,12 +55,10 @@ def monitor_mase():
             valore = float(numeri[0])
             print(f"💰 Valore estratto: {valore} €")
 
+            # --- 2. SOGLIA DI TEST A 1000 EURO ---
             if valore >= 1000:
-                messaggio = (
-                    f"🚨 <b>FONDI DISPONIBILI!</b> 🚨\n\n"
-                    f"Il residuo è di: <b>{valore} €</b>\n"
-                    f"Vai subito qui: <a href='https://www.bonusveicolielettrici.mase.gov.it'>PORTALE MASE</a>"
-                )
+                print("🚨 SOGLIA SUPERATA! Provo a inviare il messaggio a Telegram...")
+                messaggio = "🚨 <b>TEST ALLARME!</b> 🚨\nSe leggi questo, il bot è perfettamente funzionante!"
                 invia_notifica(messaggio)
             else:
                 print("Fondi ancora sotto la soglia. Nessun allarme inviato.")
