@@ -2,8 +2,11 @@ name: Monitor MASE Plafond
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # Gira ogni 10 minuti
-  workflow_dispatch: # Ti permette di farlo partire anche a mano
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+  push:  # Also run on any push to main
+    branches:
+      - main
 
 jobs:
   build:
@@ -11,17 +14,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
+      
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      - name: Run Sniper Script
+        run: pip install -r requirements.txt
+      
+      - name: Run Monitor Script
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_ID: ${{ secrets.TELEGRAM_ID }}
