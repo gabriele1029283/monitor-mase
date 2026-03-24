@@ -64,7 +64,7 @@ def monitor_mase():
             valore = float(numeri[0])
             print(f"💰 Valore estratto: {valore} €")
 
-            if valore >= 11000:
+            if valore >= 1000:
                 messaggio = (
                     f"🚨 <b>FONDI DISPONIBILI!</b> 🚨\n\n"
                     f"Il residuo è di: <b>{valore} €</b>\n"
