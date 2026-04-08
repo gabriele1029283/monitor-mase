@@ -56,10 +56,10 @@ def monitor_mase():
             valore = float(numeri[0])
             print(f"💰 Valore attuale: {valore} €")
 
-            if valore >= 0:
+            if valore >= 10000:
                 print("🚨 SOGLIA SUPERATA! Invio allarme vero...")
                 # Qui ora è impostato per mandarti la cifra esatta!
-                messaggio = f"🚨 <b>FONDI DISPONIBILI!</b> 🚨\n\nIl residuo è salito a: <b>{valore} €</b>\n\nCorri a prenotare la Dacia! sto scherzando mamma, magari.\n👉 <a href='https://www.bonusveicolielettrici.mase.gov.it'>CLICCA QUI PER IL MASE</a>"
+                messaggio = f"🚨 <b>FONDI DISPONIBILI!</b> 🚨\n\nIl residuo è salito a: <b>{valore} €</b>\n\nCorri a prenotare la Dacia!\n👉 <a href='https://www.bonusveicolielettrici.mase.gov.it'>CLICCA QUI PER IL MASE</a>"
                 invia_notifica(messaggio)
             else:
                 print("Fondi ancora sotto la soglia. Aspetto...")
